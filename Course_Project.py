@@ -39,15 +39,14 @@ f = 1 / ((1 - (trC - 3))/Lmax**2)  # Avoid division by zero
 Txx = (Cxx * f - 1) / Wi
 Txy = (Cxy * f) / Wi
 Tyy = (Cyy * f - 1) / Wi
+div_T = (1 - beta) * (dx(Txx) + dy(Txy)) * ex + (dx(Txy) + dy(Tyy)) * ey
 
 # Problem Setup
 problem = d3.IVP([u, p, Cxx, Cxy, Cyy], namespace=locals())
 
 # Momentum equation (linear LHS)
-problem.add_equation(
-    "Re*dt(u) + Re*grad(p) - beta*div(grad(u)) = "
-    "Re*dot(u, grad(u)) + (1-beta)*div(Txx*ex*ex + Txy*ex*ey + Txy*ey*ex + Tyy*ey*ey)"
-)
+problem.add_equation("Re*dt(u) + Re*grad(p) - beta*div(grad(u)) = Re*dot(u, grad(u)) + div_T")
+
 
 # Incompressibility condition
 problem.add_equation("div(u) = 0")
